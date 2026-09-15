@@ -30,6 +30,9 @@
         @yield('content')
     </main>
 
+    {{-- Reusable Confirmation Modal --}}
+    @include('partials.confirm-dialog')
+
     {{-- Toast Notification System --}}
     @include('partials.toasts')
 </body>

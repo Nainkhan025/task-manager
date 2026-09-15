@@ -41,10 +41,11 @@
                                 <button class="w-full text-xs bg-zinc-900 text-white rounded-md py-1.5 hover:bg-zinc-800 transition-colors font-medium">Save</button>
                             </form>
                             <form action="{{ route('projects.destroy', $project) }}" method="POST"
-                                  onsubmit="return confirm('Delete this project? Its tasks will become unassigned.');">
+                                  data-confirm-title="Delete project &ldquo;{{ $project->name }}&rdquo;?"
+                                  data-confirm-message="Delete this project? Its tasks will become unassigned.">
                                 @csrf
                                 @method('DELETE')
-                                <button class="w-full text-xs text-red-600 hover:bg-red-50 rounded-md py-1.5 transition-colors font-medium text-left px-2">Delete project</button>
+                                <button type="submit" class="w-full text-xs text-red-600 hover:bg-red-50 rounded-md py-1.5 transition-colors font-medium text-left px-2">Delete project</button>
                             </form>
                         </div>
                     </details>
@@ -227,10 +228,11 @@
                                     <button class="w-full text-xs bg-zinc-900 text-white rounded-md py-1.5 hover:bg-zinc-800 transition-colors font-medium mt-1">Save changes</button>
                                 </form>
                                 <form action="{{ route('tasks.destroy', $task) }}" method="POST" class="pt-1 border-t border-zinc-100"
-                                      onsubmit="return confirm('Delete this task?');">
+                                      data-confirm-title="Delete task?"
+                                      data-confirm-message="Are you sure you want to delete this task? This action cannot be undone.">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="w-full text-xs text-red-600 hover:bg-red-50 rounded-md py-1.5 transition-colors font-medium text-left px-2">Delete task</button>
+                                    <button type="submit" class="w-full text-xs text-red-600 hover:bg-red-50 rounded-md py-1.5 transition-colors font-medium text-left px-2">Delete task</button>
                                 </form>
                             </div>
                         </details>
