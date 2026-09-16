@@ -135,7 +135,7 @@
     <main class="flex-1 min-w-0 flex flex-col bg-[#fafafa]">
         
         {{-- Sticky Top Bar / View Title --}}
-        <header class="h-16 px-6 lg:px-10 border-b border-zinc-200/80 bg-white/70 backdrop-blur-md sticky top-0 z-10 flex items-center justify-between shrink-0">
+        <header class="h-16 px-6 lg:px-10 border-b border-zinc-200/80 bg-white/80 backdrop-blur-md sticky top-0 z-10 flex items-center justify-between shrink-0 shadow-2xs">
             <div class="flex items-center gap-3">
                 <h1 class="text-base font-semibold tracking-tight text-zinc-900 flex items-center gap-2">
                     @if ($activeProject === 'none')
@@ -152,6 +152,7 @@
                         <span>All Tasks</span>
                     @endif
                 </h1>
+                <span class="text-zinc-300 font-light">•</span>
                 <span class="text-xs font-medium px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-600 border border-zinc-200/60">
                     {{ $tasks->count() }} {{ Str::plural('task', $tasks->count()) }}
                 </span>
@@ -159,14 +160,14 @@
         </header>
 
         {{-- Main Scrollable Viewport Content --}}
-        <div class="flex-1 px-4 py-6 sm:px-8 sm:py-8 lg:px-10 max-w-5xl w-full mx-auto space-y-6">
+        <div class="flex-1 px-4 py-8 sm:px-8 sm:py-9 lg:px-10 max-w-5xl w-full mx-auto space-y-7">
 
-            {{-- New Task Collapsible Card --}}
-            <details class="group bg-white rounded-2xl border border-zinc-200/80 shadow-2xs transition-all overflow-hidden" {{ $tasks->isEmpty() ? 'open' : '' }}>
-                <summary class="cursor-pointer text-xs font-semibold text-zinc-800 hover:text-zinc-900 px-5 py-4 flex items-center justify-between select-none bg-white transition-colors">
+            {{-- New Task Collapsible Action Card (Dashed hairline affordance) --}}
+            <details class="group bg-white/60 hover:bg-white rounded-2xl border border-dashed border-zinc-300/80 hover:border-zinc-400/80 transition-all overflow-hidden mb-7" {{ $tasks->isEmpty() ? 'open' : '' }}>
+                <summary class="cursor-pointer text-xs font-medium text-zinc-500 hover:text-zinc-800 px-5 py-3.5 flex items-center justify-between select-none transition-colors">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-6 h-6 rounded-md bg-zinc-100 text-zinc-600 flex items-center justify-center border border-zinc-200/60">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <div class="w-5 h-5 rounded-md bg-zinc-100/80 text-zinc-400 group-hover:text-zinc-600 flex items-center justify-center border border-zinc-200/60 transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
                             </svg>
                         </div>
@@ -176,7 +177,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
                 </summary>
-                <div class="px-5 pb-5 pt-1 border-t border-zinc-100 bg-zinc-50/40">
+                <div class="px-5 pb-5 pt-2 border-t border-dashed border-zinc-200 bg-zinc-50/50">
                     <form action="{{ route('tasks.store') }}" method="POST" class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         @csrf
                         <div class="sm:col-span-2">
@@ -227,37 +228,40 @@
                     <p class="text-xs text-zinc-400 font-normal mt-1">Create your first task above to get started.</p>
                 </div>
             @else
-                <ul id="task-list" class="space-y-2.5">
+                <ul id="task-list" class="space-y-3">
                     @foreach ($tasks as $task)
                         <li data-id="{{ $task->id }}"
-                            class="task-item group bg-white border border-zinc-200/90 hover:border-zinc-300 rounded-2xl px-4 py-3.5 sm:px-5 sm:py-4 flex items-start gap-3.5 transition-all shadow-2xs hover:shadow-xs {{ $task->status === 'completed' ? 'bg-zinc-50/50' : '' }}">
+                            class="task-item group bg-white border border-zinc-200/90 hover:border-zinc-300 hover:bg-zinc-50/40 rounded-2xl px-5 py-4 sm:px-6 sm:py-4 flex items-start gap-3.5 transition-all duration-150 shadow-2xs hover:shadow-xs {{ $task->status === 'completed' ? 'opacity-60 bg-zinc-50/70 hover:opacity-85' : '' }}">
 
-                            {{-- Drag handle --}}
-                            <span class="drag-handle cursor-grab text-zinc-300 group-hover:text-zinc-400 hover:!text-zinc-700 select-none pt-0.5 transition-colors shrink-0" title="Drag to reorder">
-                                <svg class="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
-                                    <circle cx="5" cy="3" r="1"/>
-                                    <circle cx="11" cy="3" r="1"/>
-                                    <circle cx="5" cy="8" r="1"/>
-                                    <circle cx="11" cy="8" r="1"/>
-                                    <circle cx="5" cy="13" r="1"/>
-                                    <circle cx="11" cy="13" r="1"/>
-                                </svg>
-                            </span>
+                            {{-- Left Cluster: Drag Handle & Toggle Status --}}
+                            <div class="flex items-center gap-2 shrink-0 pt-0.5">
+                                {{-- Drag handle --}}
+                                <span class="drag-handle cursor-grab text-zinc-300 group-hover:text-zinc-400 hover:!text-zinc-700 select-none transition-colors" title="Drag to reorder">
+                                    <svg class="w-4 h-4" viewBox="0 0 16 16" fill="currentColor">
+                                        <circle cx="5" cy="3" r="1"/>
+                                        <circle cx="11" cy="3" r="1"/>
+                                        <circle cx="5" cy="8" r="1"/>
+                                        <circle cx="11" cy="8" r="1"/>
+                                        <circle cx="5" cy="13" r="1"/>
+                                        <circle cx="11" cy="13" r="1"/>
+                                    </svg>
+                                </span>
 
-                            {{-- Toggle Status --}}
-                            <form action="{{ route('tasks.toggle', $task) }}" method="POST" class="pt-0.5">
-                                @csrf
-                                @method('PATCH')
-                                <button type="submit" title="Cycle status: pending &rarr; in progress &rarr; completed"
-                                        class="w-4 h-4 rounded-full border flex items-center justify-center text-[9px] transition-all
-                                            {{ match($task->status) {
-                                                'completed' => 'bg-zinc-900 border-zinc-900 text-white shadow-xs',
-                                                'in_progress' => 'border-amber-500 text-amber-500 bg-amber-50/40',
-                                                default => 'border-zinc-300 hover:border-zinc-400 text-transparent',
-                                            } }}">
-                                    &#10003;
-                                </button>
-                            </form>
+                                {{-- Toggle Status --}}
+                                <form action="{{ route('tasks.toggle', $task) }}" method="POST" class="flex items-center">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" title="Cycle status: pending &rarr; in progress &rarr; completed"
+                                            class="w-4 h-4 rounded-full border flex items-center justify-center text-[9px] transition-all
+                                                {{ match($task->status) {
+                                                    'completed' => 'bg-zinc-900 border-zinc-900 text-white shadow-xs',
+                                                    'in_progress' => 'border-amber-500 text-amber-500 bg-amber-50/40',
+                                                    default => 'border-zinc-300 hover:border-zinc-400 text-transparent bg-white',
+                                                } }}">
+                                        &#10003;
+                                    </button>
+                                </form>
+                            </div>
 
                             {{-- Task Info --}}
                             <div class="flex-1 min-w-0">
@@ -266,24 +270,25 @@
                                         {{ $task->title }}
                                     </span>
 
-                                    <span class="text-[10px] font-medium px-2 py-0.5 rounded-full border
+                                    <span class="text-[10px] font-medium px-2 py-0.5 rounded-full border border-zinc-200/60
                                         {{ match($task->status) {
-                                            'completed' => 'bg-zinc-100 text-zinc-500 border-zinc-200/60',
-                                            'in_progress' => 'bg-amber-50 text-amber-700 border-amber-200/60',
-                                            default => 'bg-zinc-100 text-zinc-600 border-zinc-200/60',
+                                            'completed' => 'bg-zinc-100 text-zinc-500',
+                                            'in_progress' => 'bg-amber-50 text-amber-700 border-amber-200/80',
+                                            default => 'bg-zinc-100 text-zinc-600',
                                         } }}">
                                         {{ str_replace('_', ' ', $task->status) }}
                                     </span>
 
                                     @if ($task->project)
-                                        <span class="inline-flex items-center gap-1.5 text-[10px] font-medium px-2 py-0.5 rounded-full bg-zinc-50 border border-zinc-200/80 text-zinc-700">
+                                        <span class="inline-flex items-center gap-1.5 text-[10px] font-semibold px-2.5 py-0.5 rounded-full border transition-colors"
+                                              style="background-color: {{ $task->project->color }}14; color: {{ $task->project->color }}; border-color: {{ $task->project->color }}35;">
                                             <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color: {{ $task->project->color }}"></span>
                                             <span>{{ $task->project->name }}</span>
                                         </span>
                                     @endif
 
                                     @if ($task->due_date)
-                                        <span class="text-[11px] text-zinc-400 flex items-center gap-1">
+                                        <span class="text-[11px] text-zinc-400 flex items-center gap-1 font-medium">
                                             <svg class="w-3 h-3 text-zinc-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                             </svg>
@@ -292,13 +297,13 @@
                                     @endif
                                 </div>
                                 @if ($task->description)
-                                    <p class="text-xs text-zinc-500 mt-1 leading-relaxed">{{ $task->description }}</p>
+                                    <p class="text-xs text-zinc-500 mt-0.5 leading-normal">{{ $task->description }}</p>
                                 @endif
                             </div>
 
                             {{-- Task Action Menu --}}
                             <details class="relative shrink-0">
-                                <summary class="list-none cursor-pointer text-zinc-400 hover:text-zinc-700 p-1 rounded-md hover:bg-zinc-100 transition-colors flex items-center justify-center select-none" title="Task options">&#8942;</summary>
+                                <summary class="list-none cursor-pointer opacity-30 group-hover:opacity-100 text-zinc-400 hover:text-zinc-800 p-1 rounded-md hover:bg-zinc-200/50 transition-all select-none flex items-center justify-center" title="Task options">&#8942;</summary>
                                 <div class="absolute right-0 z-30 mt-1.5 w-64 bg-white border border-zinc-200 rounded-2xl shadow-xl shadow-zinc-900/10 p-3.5 space-y-2.5">
                                     <form action="{{ route('tasks.update', $task) }}" method="POST" class="space-y-2">
                                         @csrf
